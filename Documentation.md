@@ -92,7 +92,11 @@ This ensures the SDK remains a lightweight, real‑time quality‑control tool t
 
 
 ## 6. User Journey/Flow
-![Image](https://github.com/AryanxSethi/Images/blob/main/UserFlow.jpg)
+<figure>
+  <img src="https://github.com/AryanxSethi/Images/blob/main/UserFlow.jpg" alt="User Journey/Flow">
+  <figcaption>User Journey/Flow</figcaption>
+</figure>
+
 1. Start Capture
 
     The user opens the app and begins scanning the document.
@@ -268,23 +272,15 @@ Please click  [here](./DocumentAnalyzer.md) for the **DocumentAnalyzer (SDK)** d
 
 ## 8. Architecture Diagram
 
-<div align="center" style="padding: 24px 0;">
-  <img src="SystemArch.jpg" alt="System Architecture" width="600">
-  <p><i>System Architecture</i></p>
-</div>
+<figure>
+  <img src="https://github.com/AryanxSethi/Images/blob/main/SystemArch.jpg" alt="Architecture Diagram">
+  <figcaption>Architecture Diagram</figcaption>
+</figure>
 
 ## 9. Wireframes or UI/UX Designs:
 
-<div align="center" style="padding: 24px 0;">
-  <img src="./Landing.jpg" alt="Landing Page" width="40%">
-  <p><i>Landing Page UI</i></p>
-</div>
-<div align="center" style="padding: 24px 0;">
-  <img src="./camera.jpg" alt="Document Scanning Page" width="40%">
-  <p><i>Document Scanning Page</i></p>
-</div>
-<div align="center" style="padding: 24px 0;">
-  <img src="./preview.jpg" alt="Document Preview Page" width="40%">
-  <p><i>Document Preview Page</i></p>
-</div>
+<figure>
+  <img src="https://github.com/AryanxSethi/Images/blob/main/Landing.jpg" width="40%">
+  <figcaption>Landing Page UI</figcaption>
+</figure>
 
