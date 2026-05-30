@@ -1,0 +1,290 @@
+# Challenge 2: Real-Time KYC Document Quality Detection
+# Table of Contents
+1. [Team Name - Stealer Trojan](#1-team-name---stealer-trojan)
+2. [Team Member Details](#2-team-member-details)
+3. [Problem Understanding](#3-problem-understanding)
+4. [Proposed Solution](#4-proposed-solution)
+5. [In-Scope & Out-Scope](#5-in-scope--out-scope)
+6. [User Journey/Flow](#6-user-journeyflow)
+7. [Technology Stack](#7-technology-stack)
+   - [7.1 Algorithms](#71-algorithms)
+     - [The Laplacian of Gaussian (LoG)](#the-laplacian-of-gaussian-log)
+       - [Gaussian Smoothing](#gaussian-smoothing)
+         - [Formula](#formula)
+         - [Explanation](#explanation)
+         - [How It Works](#how-it-works)
+       - [Laplacian Operator](#laplacian-operator)
+         - [Formula](#formula-1)
+         - [Explanation](#explanation-1)
+         - [How It Works](#how-it-works-1)
+       - [Common Discrete Kernels](#common-discrete-kernels)
+         - [4-Neighbour Kernel](#4-neighbour-kernel)
+         - [8-Neighbour Kernel](#8-neighbour-kernel)
+       - [Applications](#applications)
+     - [Mean Value of Luminance](#mean-value-of-luminance)
+       - [Formula](#formula-2)
+       - [Explanation](#explanation-2)
+       - [How It Works](#how-it-works-2)
+       - [For a Grayscale Image](#for-a-grayscale-image)
+       - [Applications](#applications-1)
+   - [7.2 OpenCV (Open Source Computer Vision Library)](#72-opencv-open-source-computer-vision-library)
+   - [7.3 Google ML Kit](#73-google-ml-kit)
+   - [7.4 Android CameraX](#74-android-camerax)
+   - [7.5 DocumentAnalyzer (SDK)](#75-documentanalyzer-sdk)
+8. [Architecture Diagram](#8-architecture-diagram)
+9. [Wireframes or UI/UX Designs](#9-wireframes-or-uiux-designs)
+
+
+## 1. Team Name - Stealer Trojan
+## 2. Team Member Details
+| Full Name   | Email                     | Role                     | Permanent Address      | Gender |
+|-------------|---------------------------|--------------------------|------------------------|--------|
+| Aryan Sethi | sethiaryan217@gmail.com   | Technical Documentation  | Kathmandu   | Male   |
+| Pratyush Sapkota | pratyushsapkota@gmail.com   |  Developer  | , Kathmandu   | Male   |
+| Rijan Bhattarai | rijanbhattarai2006@gmail.com   |  Developer  | Kathmandu   | Male   |
+| Roshan Yadav | roshanyadav1724@gmail.com   |  Designer  | Kathmandu   | Male   |
+
+## 3. Problem Understanding
+
+eSewa receives more than 5,000 **KYC (Know our Customer)** submission daily. However, around __40%__ of these submission are rejected despite user providing legitimate documents leading to repeated submission and increased support inquiries.
+
+The primary factors contributing to the rejection are image quality issues, particularly:
+- Blurred Images.
+- Glare and poor lighting conditions.
+- Incorrect document framing.
+
+Among these, __blur__ and __incorrect framing__ contributes to approximately 30% of the total rejection.
+
+Addressing these quality-related rejection during document validation in __real-time__ provides a significant opportunity to improve user experience, reduce verification delays, and optimize support operations.
+
+## 4. Proposed Solution
+
+By introducing a real-time edge verification system driven by __Algorithms__ we aim to reduce the number of rejected KYC submissions along with reduction in the server load resources and the human verifiers and an improved rate in user satisfaction.
+
+Technologies used to achieve the real-time verifications we used:
+- Native Android
+- OpenCV _(Open Source Computer Vision Library)_
+
+## 5. In-Scope & Out-Scope
+
+### In Scope
+
+The Document Analyzer SDK focuses exclusively on **real‑time document image quality assessment** during capture:
+
+- **Edge detection** – locating the four corners of the document within the camera frame
+- **Blur/sharpness evaluation** – ensuring the captured image is not blurry
+- **Brightness analysis** – detecting underexposed (too dark) or overexposed frames
+- **Glare detection** – identifying reflections and specular highlights
+- **User guidance** – providing visual hints (alignment, lighting, glare) to help the user achieve a high‑quality capture
+- **Auto‑capture** – triggering the snapshot when all quality metrics pass a configurable threshold
+
+### Out of Scope
+
+The SDK does **not** perform any verification or interpretation of the document’s content or legal status:
+
+- **Document validity** – no forgery detection, authenticity checks, or tampering analysis
+- **Ownership verification** – no identity matching, name‑ID cross‑check, or KYC processes
+- **Content analysis** – no extraction, classification, or understanding of document fields (e.g., dates, amounts, signatures) beyond the readability confidence score
+- **Text readability** – measuring OCR confidence to confirm that text is legible
+- **Data extraction** – the SDK returns quality scores and corner coordinates only; it does not parse or store personal data
+
+This ensures the SDK remains a lightweight, real‑time quality‑control tool that can be integrated into broader document workflows without making decisions about the document’s meaning or trustworthiness.
+
+
+## 6. User Journey/Flow
+![Image](https://github.com/AryanxSethi/Images/blob/main/UserFlow.jpg)
+1. Start Capture
+
+    The user opens the app and begins scanning the document.
+
+2. Real-Time Quality Checks
+
+    As the user positions the document, the system continuously evaluates:
+    - Blur
+    - Lighting
+    - Document Edges
+    - Alignment and placement
+
+3. Instant User Feedback
+
+    Real-time guidance is provided to help the user improve image quality and positioning.
+
+4. Automatic Capture
+
+    When all quality checks meet the predefined threshold, the image is captured automatically.
+
+5. Scoring and Reporting
+
+    After a successful capture, the system generates _**overall quality score, OCR score, and usage/reporting data**_
+
+6. Backend Submission
+
+    The front and back images, scores, and report are sent to the backend server for storage, analysis, and future dataset development.
+
+
+## 7. Technology Stack
+### 7.1 Algorithms:
+## The Laplacian of Gaussian _(LoG)_
+
+<dd>The Laplacian of Gaussian algorithm detects image blur by a second-order differential operator to measure the edge sharpness. It works on the principle that sharp, well-focused images contain rapid intensity changes <i>(high-frequency edges)</i>, resulting in a high variance when convolved with a Laplacian filter.</dd>
+
+## Formula
+
+- **Gaussian Smoothing:** The 2D Gaussian function is commonly used for **smoothing or blurring images**.
+
+$$
+G(x,y) = \frac{1}{2\pi\sigma^2} \, e^{-\frac{x^2 + y^2}{2\sigma^2}}
+$$
+
+## Explanation
+
+- **\(x, y\)** – horizontal and vertical distances from the center of the kernel.  
+- $(\sigma)$ – controls the “spread” of the Gaussian; larger $(\sigma)$ gives stronger smoothing.  
+- $({1}/{2\pi\sigma^2})$ – normalizes the kernel so the total weight sums to 1 (brightness stays consistent).  
+- $(e^{-\frac{x^2 + y^2}{2\sigma^2}})$ – assigns higher weights to points near the center, lower weights further away, producing a smooth, bell-shaped kernel.
+
+### How It Works
+
+Applying this kernel to an image replaces each pixel with a weighted average of its neighbors. Pixels closer to the center contribute more, **reducing noise and smoothing sharp edges**.
+
+## Formula
+
+- **Laplacian Operator**: The Laplacian operator is a **second-order derivative operator** used in image processing to detect regions of rapid intensity change, such as **edges** and fine details.
+
+$$
+\nabla^2 f(x,y) =
+\frac{\partial^2 f}{\partial x^2}
++
+\frac{\partial^2 f}{\partial y^2}
+$$
+
+## Explanation
+
+- $f(x,y)$ – the image intensity at position \((x,y)\).
+- $(\frac{\partial^2 f}{\partial x^2})$ – the second derivative in the horizontal direction.
+- $(\frac{\partial^2 f}{\partial y^2})$ – the second derivative in the vertical direction.
+- $(\nabla^2)$ – represents the Laplacian operator.
+
+### How It Works
+
+The Laplacian measures how quickly image intensity changes around a pixel by combining the second derivatives in both the horizontal and vertical directions. Areas with little intensity variation produce values close to zero, while regions containing edges or fine details produce large positive or negative values.
+
+Because the Laplacian is highly sensitive to noise, it is often applied after a smoothing step, such as Gaussian filtering. This combination is known as the **Laplacian of Gaussian (LoG)** method.
+
+## Common Discrete Kernels
+
+### 4-Neighbour Kernel
+
+$$
+\begin{bmatrix}
+0 & -1 & 0 \\
+-1 & 4 & -1 \\
+0 & -1 & 0
+\end{bmatrix}
+$$
+
+### 8-Neighbour Kernel
+
+$$
+\begin{bmatrix}
+-1 & -1 & -1 \\
+-1 & 8 & -1 \\
+-1 & -1 & -1
+\end{bmatrix}
+$$
+
+### Applications
+
+- Edge detection
+- Image sharpening
+- Feature extraction
+- Blob detection
+- Computer vision preprocessing
+
+## Mean Value of Luminance
+
+The mean value of luminance represents the **average brightness** of an image. It is commonly used in image processing to measure the overall intensity level and to compare the brightness of different images.
+
+## Formula
+
+$$
+\mu = \frac{1}{N}\sum_{i=1}^{N} L_i
+$$
+
+## Explanation
+
+- $(\mu)$ – the mean luminance of the image.
+- $(\N)$ – the total number of pixels in the image.
+- $(L_i)$ – the luminance (brightness) value of the \(i\)-th pixel.
+- $(\sum)$ – indicates that the luminance values of all pixels are added together.
+
+### How It Works
+
+The mean luminance is calculated by summing the luminance values of every pixel in the image and dividing by the total number of pixels. The result is a single value that represents the image's average brightness.
+
+- A **higher mean luminance** indicates a brighter image.
+- A **lower mean luminance** indicates a darker image.
+- A value near the middle of the luminance range suggests a moderately illuminated image.
+
+## For a Grayscale Image
+
+If the image dimensions are $(M \times N)$, the mean luminance can also be expressed as:
+
+$$
+\mu = \frac{1}{MN}
+\sum_{x=0}^{M-1}
+\sum_{y=0}^{N-1}
+L(x,y)
+$$
+
+where:
+
+- **\(L(x,y)\)** is the luminance value at pixel location \((x,y)\).
+- **\(M\)** and **\(N\)** are the image width and height.
+
+### Applications
+
+- Measuring overall image brightness
+- Image quality assessment
+- Exposure analysis
+- Image normalization
+- Preprocessing for computer vision algorithms
+
+## 7.2 OpenCV (Open Source Computer Vision Library):
+Computer vision engine was utilized for real-time document detection, edge analysis, blur estimation, brightness evaluation, and glare detection. All image-processing pipelines _(Canny edge, Laplacian variance, LAB color space analysis, morphological operations)_ run through OpenCV’s native library.
+
+## 7.3 Google ML Kit:
+Used for Optical character recognition _(OCR)_ and text readability scoring via the *Devanagari* (or other) text recognizer. Provides character‑level confidence values to determine if document text is legible.
+
+## 7.4 Android CameraX
+Used for Android Camera integration and frame delivery. Provides a lifecycle‑aware, efficient pipeline that feeds YUV frames to the analyzer.
+
+## 7.5 YOLO Model _(You Only Look Once)_
+
+YOLO is a real‑time object detection model that can directly localize and classify objects in a single pass. For the document scanning, a lightweight YOLO variant was integrated to detect the bounding regions of the document providing a robust, fast and accurate solution.
+
+## 7.5 DocumentAnalyzer (SDK):
+Please click  [here](./DocumentAnalyzer.md) for the **DocumentAnalyzer (SDK)** documentation.
+
+## 8. Architecture Diagram
+
+<div align="center" style="padding: 24px 0;">
+  <img src="SystemArch.jpg" alt="System Architecture" width="600">
+  <p><i>System Architecture</i></p>
+</div>
+
+## 9. Wireframes or UI/UX Designs:
+
+<div align="center" style="padding: 24px 0;">
+  <img src="./Landing.jpg" alt="Landing Page" width="40%">
+  <p><i>Landing Page UI</i></p>
+</div>
+<div align="center" style="padding: 24px 0;">
+  <img src="./camera.jpg" alt="Document Scanning Page" width="40%">
+  <p><i>Document Scanning Page</i></p>
+</div>
+<div align="center" style="padding: 24px 0;">
+  <img src="./preview.jpg" alt="Document Preview Page" width="40%">
+  <p><i>Document Preview Page</i></p>
+</div>
+
