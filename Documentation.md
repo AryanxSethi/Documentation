@@ -1,6 +1,5 @@
 # Challenge 2: Real-Time KYC Document Quality Detection
 # Table of Contents
-# Table of Contents
 
 1. [Team Name - Stealer Trojan](#1-team-name---stealer-trojan)
 2. [Team Member Details](#2-team-member-details)
@@ -47,8 +46,8 @@
 | Full Name   | Email                     | Role                     | Permanent Address      | Gender |
 |-------------|---------------------------|--------------------------|------------------------|--------|
 | Aryan Sethi | sethiaryan217@gmail.com   | Technical Documentation  | Kathmandu   | Male   |
-| Pratyush Sapkota | pratyushsapkota@gmail.com   |  Developer  |              Kathmandu   | Male   |
-| Rijan Bhattarai | rijanbhattarai2006@gmail.com   |  Developer  | Kathmandu   | Male   |
+| Pratyush Sapkota | pratyushsapkota@gmail.com   |  System Developer  |              Kathmandu   | Male   |
+| Rijan Bhattarai | rijanbhattarai2006@gmail.com   | AI Developer  | Kathmandu   | Male   |
 | Roshan Yadav | roshanyadav1724@gmail.com   |  Designer  | Kathmandu   | Male   |
 
 ## 3. Problem Understanding
