@@ -29,10 +29,11 @@
        - [For a Grayscale Image](#for-a-grayscale-image)
        - [Applications](#applications-1)
    - [7.2 OpenCV (Open Source Computer Vision Library)](#72-opencv-open-source-computer-vision-library)
-   - [7.3 YOLO Model (You Only Look Once)](#73-yolo-model-you-only-look-once)
-   - [7.4 ONNX (Open Neural Network Exchange)](#74-onnx-open-neural-network-exchange)
-   - [7.5 Label Studio](#75-label-studio)
-   - [7.6 SDK (Software Development Kit)](#76-sdk-software-development-kit)
+   - [7.3 Android CameraX](#73-android-camerax)
+   - [7.4 YOLO Model (You Only Look Once)](#74-yolo-model-you-only-look-once)
+   - [7.5 ONNX (Open Neural Network Exchange)](#75-onnx-open-neural-network-exchange)
+   - [7.6 Label Studio](#76-label-studio)
+   - [7.7 SDK (Software Development Kit)](#77-sdk-software-development-kit)
 8. [Architecture Diagram](#8-architecture-diagram)
 9. [Wireframe or UI/UX Designs](#9-wireframe-or-uiux-designs)
 10. [Limitations](#10-limitations)
@@ -40,6 +41,11 @@
     - [10.2 Model Accuracy (Hallucination Risk)](#102-model-accuracy-hallucination-risk)
     - [10.3 Hardcoded Thresholds](#103-hardcoded-thresholds)
     - [10.4 Overall System Load](#104-overall-system-load)
+11. [Scalability and Future Enhancements](#11-scalability-and-future-enhancements)
+    - [11.1 Larger and More Diverse Training Dataset](#111-larger-and-more-diverse-training-dataset)
+    - [11.2 Efficient Deep Learning Models](#112-efficient-deep-learning-models)
+    - [11.3 System Resource Optimization](#113-system-resource-optimization)
+    - [11.4 iOS Implementation](#114-ios-implementation)
 
 ## 1. Team Name - Stealer Trojan
 ## 2. Team Member Details
@@ -124,14 +130,6 @@ This ensures the SDK remains a real‑time quality‑control tool that can be in
 4. Automatic Capture
 
     When all quality checks meet the predefined threshold, the image is captured automatically.
-
-5. Scoring and Reporting
-
-    After a successful capture, the system generates _**overall quality score,and usage/reporting data**_
-
-6. Backend Submission
-
-    The front and back images, scores, and report are sent to the backend server for storage, analysis, and future dataset development.
 
 
 ## 7. Technology Stack
@@ -262,23 +260,23 @@ where:
 - Image normalization
 - Preprocessing for computer vision algorithms
 
-## 7.1 OpenCV (Open Source Computer Vision Library):
+## 7.2 OpenCV (Open Source Computer Vision Library):
 Computer vision engine was utilized for real-time document detection, edge analysis, blur estimation, brightness evaluation, and glare detection. All image-processing pipelines _(Canny edge, Laplacian variance, LAB color space analysis, morphological operations)_ run through OpenCV’s native library.
 
-## 7.2 Android CameraX
+## 7.3 Android CameraX
 Used for Android Camera integration and frame delivery. Provides a lifecycle‑aware, efficient pipeline that feeds YUV frames to the analyzer.
 
-## 7.3 YOLO Model _(You Only Look Once)_
+## 7.4 YOLO Model _(You Only Look Once)_
 
 YOLO is a real‑time object detection model that can directly localize and classify objects in a single pass. For the document scanning, a lightweight YOLO variant was integrated to detect the bounding regions of the document providing a robust, fast and accurate solution.
 
-## 7.4 ONNX _(Open Neural Network Exchange)_
+## 7.5 ONNX _(Open Neural Network Exchange)_
 Inference engine for running custom deep learning models _(e.g., YOLO for document corner detection)_ on‑device with hardware acceleration. This allows the SDK to optionally replace or augment the contour‑based detector with a more robust neural network.
 
-## 7.5 Label Studio 
-It is a web‑based tool for labelling and annotating document images. It was utilized to create training datasets _(bounding boxes, corner keypoints, blur/glare classifications)_ for custom detection models.
+## 7.6 Label Studio 
+It is a web‑based tool for labelling and annotating document images. It was utilized to create training datasets _(bounding boxes, corner key points, blur/glare classifications)_ for custom detection models.
 
-## 7.6 SDK (Software Development Kit)
+## 7.7 SDK (Software Development Kit)
 Please click  [here](https://github.com/AryanxSethi/Documentation/blob/main/DEVELOPER_HANDOFF.md) for the **DocumentAnalyzer (SDK)** documentation.
 
 ## 8. Architecture Diagram
@@ -327,3 +325,36 @@ These values are not exposed as a unified configuration API, making it difficult
 
 ### 10.4 Overall System Load
 The SDK runs multiple computationally intensive pipelines _(OpenCV contour analysis, Laplacian blur estimation, ML Vision)_ concurrently on every frame. This makes the **application as a whole resource‑heavy**, potentially interfering with other camera‑related tasks or causing the device to heat up under prolonged use.
+
+## 11. Scalability and Future Enhancements
+
+The current version of the Document Analyzer SDK lays a strong foundation for real‑time KYC document quality detection. The following enhancements are planned to improve scalability, accuracy, and platform reach.
+
+### 11.1 Larger and More Diverse Training Dataset
+The detection model currently relies on a limited dataset. To reduce hallucination risks and improve accuracy across different document types, lighting conditions, and camera sensors, we plan to:
+
+- Expand the dataset with **thousands of annotated images** covering various document categories (citizenship certificates, passports, driving licences, etc.).
+- Include challenging scenarios: low‑light environments, extreme angles, partial occlusion, and different surface textures.
+- Utilise **data augmentation** and synthetic generation to simulate realistic edge cases.
+
+### 11.2 Efficient Deep Learning Models
+To balance accuracy and on‑device performance, future iterations will adopt:
+
+- **Lightweight architectures** (e.g., MobileNet, EfficientNet‑Lite, NanoDet) tailored for real‑time inference on mobile CPUs and GPUs.
+- **Quantisation and pruning** to reduce model size and inference latency without significant accuracy loss.
+- **Multi‑task learning** – a single model that simultaneously performs document detection, blur estimation, and glare classification, reducing the overall processing pipeline overhead.
+
+### 11.3 System Resource Optimization
+Current resource consumption (up to 50% memory usage) will be addressed through:
+
+- **Frame skipping and adaptive processing rates** – dynamically adjusting analysis frequency based on device performance and scene stability.
+- **Memory pooling and native buffer reuse** – minimizing garbage collection overhead and reducing Mat allocation/deallocation.
+- **Partial pipeline execution** – disabling computationally expensive stages when not required, based on real‑time quality feedback.
+
+### 11.4 iOS Implementation
+The SDK is currently exclusive to Android. To serve a broader user base, we will develop an iOS counterpart that:
+
+- Leverages **AVFoundation** for camera capture and frame delivery.
+- Uses the same OpenCV and ONNX Runtime libraries, compiled for iOS (arm64).
+- Maintains a unified API design across platforms, enabling seamless integration for cross‑platform applications.
+
