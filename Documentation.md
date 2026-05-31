@@ -101,7 +101,7 @@ This ensures the SDK remains a real‑time quality‑control tool that can be in
 
 ## 6. User Journey/Flow
 <figure align="center">
-  <img src="https://github.com/AryanxSethi/Images/raw/main/UserFlow.jpg" alt="User Journey/Flow">
+  <img src="https://github.com/AryanxSethi/Documentation/raw/main/UserFlow.jpg" alt="User Journey/Flow">
   <figcaption>User Journey/Flow</figcaption>
 </figure>
 
@@ -279,31 +279,31 @@ Inference engine for running custom deep learning models _(e.g., YOLO for docume
 It is a web‑based tool for labelling and annotating document images. It was utilized to create training datasets _(bounding boxes, corner keypoints, blur/glare classifications)_ for custom detection models.
 
 ## 7.6 SDK (Software Development Kit)
-Please click  [here](https://github.com/AryanxSethi/Images/blob/main/DEVELOPER_HANDOFF.md) for the **DocumentAnalyzer (SDK)** documentation.
+Please click  [here](https://github.com/AryanxSethi/Documentation/blob/main/DEVELOPER_HANDOFF.md) for the **DocumentAnalyzer (SDK)** documentation.
 
 ## 8. Architecture Diagram
 
 <figure align="center">
-  <img src="https://github.com/AryanxSethi/Images/raw/main/SystemArch.jpg" alt="Architecture Diagram">
+  <img src="https://github.com/AryanxSethi/Documentation/raw/main/SystemArch.jpg" alt="Architecture Diagram">
   <figcaption>Architecture Diagram</figcaption>
 </figure>
 
 ## 9. Wireframe or UI/UX Designs:
 
 <figure align="center">
-  <img src="https://github.com/AryanxSethi/Images/raw/main/Landing.jpg"
+  <img src="https://github.com/AryanxSethi/Documentation/raw/main/Landing.jpg"
        alt="Landing page"
        width="40%">
   <figcaption>Landing Page UI</figcaption>
 </figure>
 <figure align="center">
-  <img src="https://github.com/AryanxSethi/Images/raw/main/camera.jpg"
+  <img src="https://github.com/AryanxSethi/Documentation/raw/main/camera.jpg"
        alt="Landing page"
        width="40%">
   <figcaption>Camera Page UI with real-time feedback</figcaption>
 </figure>
 <figure align="center">
-  <img src="https://github.com/AryanxSethi/Images/raw/main/preview.jpg"
+  <img src="https://github.com/AryanxSethi/Documentation/raw/main/preview.jpg"
        alt="Landing page"
        width="40%">
   <figcaption>Preview Page UI</figcaption>
