@@ -1,22 +1,24 @@
 # Challenge 2: Real-Time KYC Document Quality Detection
 # Table of Contents
+# Table of Contents
+
 1. [Team Name - Stealer Trojan](#1-team-name---stealer-trojan)
 2. [Team Member Details](#2-team-member-details)
 3. [Problem Understanding](#3-problem-understanding)
 4. [Proposed Solution](#4-proposed-solution)
 5. [In-Scope & Out-Scope](#5-in-scope--out-scope)
+   - [In Scope](#in-scope)
+   - [Out of Scope](#out-of-scope)
 6. [User Journey/Flow](#6-user-journeyflow)
 7. [Technology Stack](#7-technology-stack)
    - [7.1 Algorithms](#71-algorithms)
      - [The Laplacian of Gaussian (LoG)](#the-laplacian-of-gaussian-log)
-       - [Gaussian Smoothing](#gaussian-smoothing)
-         - [Formula](#formula)
-         - [Explanation](#explanation)
-         - [How It Works](#how-it-works)
-       - [Laplacian Operator](#laplacian-operator)
-         - [Formula](#formula-1)
-         - [Explanation](#explanation-1)
-         - [How It Works](#how-it-works-1)
+       - [Formula – Gaussian Smoothing](#formula)
+       - [Explanation](#explanation)
+       - [How It Works](#how-it-works)
+       - [Formula – Laplacian Operator](#formula-1)
+       - [Explanation](#explanation-1)
+       - [How It Works](#how-it-works-1)
        - [Common Discrete Kernels](#common-discrete-kernels)
          - [4-Neighbour Kernel](#4-neighbour-kernel)
          - [8-Neighbour Kernel](#8-neighbour-kernel)
@@ -28,19 +30,24 @@
        - [For a Grayscale Image](#for-a-grayscale-image)
        - [Applications](#applications-1)
    - [7.2 OpenCV (Open Source Computer Vision Library)](#72-opencv-open-source-computer-vision-library)
-   - [7.3 Google ML Kit](#73-google-ml-kit)
-   - [7.4 Android CameraX](#74-android-camerax)
-   - [7.5 DocumentAnalyzer (SDK)](#75-documentanalyzer-sdk)
+   - [7.3 YOLO Model (You Only Look Once)](#73-yolo-model-you-only-look-once)
+   - [7.4 ONNX (Open Neural Network Exchange)](#74-onnx-open-neural-network-exchange)
+   - [7.5 Label Studio](#75-label-studio)
+   - [7.6 SDK (Software Development Kit)](#76-sdk-software-development-kit)
 8. [Architecture Diagram](#8-architecture-diagram)
-9. [Wireframes or UI/UX Designs](#9-wireframes-or-uiux-designs)
-
+9. [Wireframe or UI/UX Designs](#9-wireframe-or-uiux-designs)
+10. [Limitations](#10-limitations)
+    - [10.1 Resource Usage](#101-resource-usage)
+    - [10.2 Model Accuracy (Hallucination Risk)](#102-model-accuracy-hallucination-risk)
+    - [10.3 Hardcoded Thresholds](#103-hardcoded-thresholds)
+    - [10.4 Overall System Load](#104-overall-system-load)
 
 ## 1. Team Name - Stealer Trojan
 ## 2. Team Member Details
 | Full Name   | Email                     | Role                     | Permanent Address      | Gender |
 |-------------|---------------------------|--------------------------|------------------------|--------|
 | Aryan Sethi | sethiaryan217@gmail.com   | Technical Documentation  | Kathmandu   | Male   |
-| Pratyush Sapkota | pratyushsapkota@gmail.com   |  Developer  | , Kathmandu   | Male   |
+| Pratyush Sapkota | pratyushsapkota@gmail.com   |  Developer  |              Kathmandu   | Male   |
 | Rijan Bhattarai | rijanbhattarai2006@gmail.com   |  Developer  | Kathmandu   | Male   |
 | Roshan Yadav | roshanyadav1724@gmail.com   |  Designer  | Kathmandu   | Male   |
 
@@ -59,7 +66,7 @@ Addressing these quality-related rejection during document validation in __real-
 
 ## 4. Proposed Solution
 
-By introducing a real-time edge verification system driven by __Algorithms__ we aim to reduce the number of rejected KYC submissions along with reduction in the server load resources and the human verifiers and an improved rate in user satisfaction.
+By introducing a real-time edge verification system driven by __Algorithm__ and __Computer Vision__ we aim to reduce the number of rejected KYC submissions along with reduction in the server load resources and the human verifiers and an improved rate in user satisfaction.
 
 Technologies used to achieve the real-time verifications we used:
 - Native Android
@@ -84,16 +91,18 @@ The SDK does **not** perform any verification or interpretation of the document�
 
 - **Document validity** – no forgery detection, authenticity checks, or tampering analysis
 - **Ownership verification** – no identity matching, name‑ID cross‑check, or KYC processes
+- **Cross‑platform support** – the SDK is designed and tested exclusively for **Android** _(Kotlin/Java with CameraX and OpenCV)_. There is no iOS, web, or desktop version, which provides cross‑platform wrappers _(e.g., Flutter, React Native, Xamarin)_ as part of this release.
 - **Content analysis** – no extraction, classification, or understanding of document fields (e.g., dates, amounts, signatures) beyond the readability confidence score
 - **Text readability** – measuring OCR confidence to confirm that text is legible
 - **Data extraction** – the SDK returns quality scores and corner coordinates only; it does not parse or store personal data
+- **Document Analysis** – the SDK was built to analyze real, physical documents placed under the camera despite that images displayed on a computer monitor, phone screen, or any other digital display are accepted. Photos of screens may introduce patterns, reflections, and low quality that fall outside the SDK’s scope and can lead to unreliable scores.
 
-This ensures the SDK remains a lightweight, real‑time quality‑control tool that can be integrated into broader document workflows without making decisions about the document’s meaning or trustworthiness.
+This ensures the SDK remains a real‑time quality‑control tool that can be integrated into broader document workflows without making decisions about the document’s meaning or trustworthiness.
 
 
 ## 6. User Journey/Flow
-<figure>
-  <img src="https://github.com/AryanxSethi/Images/blob/main/UserFlow.jpg" alt="User Journey/Flow">
+<figure align="center">
+  <img src="https://github.com/AryanxSethi/Images/raw/main/UserFlow.jpg" alt="User Journey/Flow">
   <figcaption>User Journey/Flow</figcaption>
 </figure>
 
@@ -119,7 +128,7 @@ This ensures the SDK remains a lightweight, real‑time quality‑control tool t
 
 5. Scoring and Reporting
 
-    After a successful capture, the system generates _**overall quality score, OCR score, and usage/reporting data**_
+    After a successful capture, the system generates _**overall quality score,and usage/reporting data**_
 
 6. Backend Submission
 
@@ -218,7 +227,7 @@ $$
 ## Explanation
 
 - $(\mu)$ – the mean luminance of the image.
-- $(\N)$ – the total number of pixels in the image.
+- $(N)$ – the total number of pixels in the image.
 - $(L_i)$ – the luminance (brightness) value of the \(i\)-th pixel.
 - $(\sum)$ – indicates that the luminance values of all pixels are added together.
 
@@ -254,33 +263,68 @@ where:
 - Image normalization
 - Preprocessing for computer vision algorithms
 
-## 7.2 OpenCV (Open Source Computer Vision Library):
+## 7.1 OpenCV (Open Source Computer Vision Library):
 Computer vision engine was utilized for real-time document detection, edge analysis, blur estimation, brightness evaluation, and glare detection. All image-processing pipelines _(Canny edge, Laplacian variance, LAB color space analysis, morphological operations)_ run through OpenCV’s native library.
 
-## 7.3 Google ML Kit:
-Used for Optical character recognition _(OCR)_ and text readability scoring via the *Devanagari* (or other) text recognizer. Provides character‑level confidence values to determine if document text is legible.
-
-## 7.4 Android CameraX
+## 7.2 Android CameraX
 Used for Android Camera integration and frame delivery. Provides a lifecycle‑aware, efficient pipeline that feeds YUV frames to the analyzer.
 
-## 7.5 YOLO Model _(You Only Look Once)_
+## 7.3 YOLO Model _(You Only Look Once)_
 
 YOLO is a real‑time object detection model that can directly localize and classify objects in a single pass. For the document scanning, a lightweight YOLO variant was integrated to detect the bounding regions of the document providing a robust, fast and accurate solution.
 
-## 7.5 DocumentAnalyzer (SDK):
-Please click  [here](./DocumentAnalyzer.md) for the **DocumentAnalyzer (SDK)** documentation.
+## 7.4 ONNX _(Open Neural Network Exchange)_
+Inference engine for running custom deep learning models _(e.g., YOLO for document corner detection)_ on‑device with hardware acceleration. This allows the SDK to optionally replace or augment the contour‑based detector with a more robust neural network.
+
+## 7.5 Label Studio 
+It is a web‑based tool for labelling and annotating document images. It was utilized to create training datasets _(bounding boxes, corner keypoints, blur/glare classifications)_ for custom detection models.
+
+## 7.6 SDK (Software Development Kit)
+Please click  [here](https://github.com/AryanxSethi/Images/blob/main/DEVELOPER_HANDOFF.md) for the **DocumentAnalyzer (SDK)** documentation.
 
 ## 8. Architecture Diagram
 
-<figure>
-  <img src="https://github.com/AryanxSethi/Images/blob/main/SystemArch.jpg" alt="Architecture Diagram">
+<figure align="center">
+  <img src="https://github.com/AryanxSethi/Images/raw/main/SystemArch.jpg" alt="Architecture Diagram">
   <figcaption>Architecture Diagram</figcaption>
 </figure>
 
-## 9. Wireframes or UI/UX Designs:
+## 9. Wireframe or UI/UX Designs:
 
-<figure>
-  <img src="https://github.com/AryanxSethi/Images/blob/main/Landing.jpg" width="40%">
+<figure align="center">
+  <img src="https://github.com/AryanxSethi/Images/raw/main/Landing.jpg"
+       alt="Landing page"
+       width="40%">
   <figcaption>Landing Page UI</figcaption>
 </figure>
+<figure align="center">
+  <img src="https://github.com/AryanxSethi/Images/raw/main/camera.jpg"
+       alt="Landing page"
+       width="40%">
+  <figcaption>Camera Page UI with real-time feedback</figcaption>
+</figure>
+<figure align="center">
+  <img src="https://github.com/AryanxSethi/Images/raw/main/preview.jpg"
+       alt="Landing page"
+       width="40%">
+  <figcaption>Preview Page UI</figcaption>
+</figure>
 
+## 10. Limitations
+
+### 10.1 Resource Usage
+The current implementation is not optimized for old low‑end devices. During real‑time analysis, the SDK can consume **up to 50% of the device’s available memory** and places a sustained load on the CPU/GPU. This may cause performance degradation, battery drain, or thermal throttling on devices with limited RAM or processing power. Future releases will focus on reducing the memory footprint and processing overhead.
+
+### 10.2 Model Accuracy (Hallucination Risk)
+When a deep‑learning model (e.g., YOLO via ONNX) is used for document detection, its predictions are only as reliable as the training data. With a limited or non‑diverse dataset, the model may **hallucinate** document corners, falsely detect documents in background objects, or miss documents with unfamiliar layouts, paper types, or lighting conditions. Accuracy should be validated in the target environment before production use.
+
+### 10.3 Hardcoded Thresholds
+Several quality‑assessment parameters are hardcoded in the detection functions:
+- Blur variance threshold
+- Brightness mean threshold
+- Glare intensity and ratio thresholds
+
+These values are not exposed as a unified configuration API, making it difficult to tune the SDK for different document types, camera sensors, or lighting conditions without modifying the source code.
+
+### 10.4 Overall System Load
+The SDK runs multiple computationally intensive pipelines _(OpenCV contour analysis, Laplacian blur estimation, ML Vision)_ concurrently on every frame. This makes the **application as a whole resource‑heavy**, potentially interfering with other camera‑related tasks or causing the device to heat up under prolonged use.
